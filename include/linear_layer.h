@@ -1,29 +1,28 @@
-// src/linear_layer.h
-#ifndef LINEAR_LAYER_H
+#ifndef LINEAR_LAYER_H // Include guard to prevent multiple inclusions of this header file
 #define LINEAR_LAYER_H
 
-#ifdef __cplusplus
-extern "C" { 
-#endif
+#include <torch/extension.h> // Include the PyTorch extension header for CUDA support
 
-/**
- * @brief CUDA kernel to compute forward pass of a linear layer
- *
- * This kernel perform y = xA^T + b for a linear layer
- * 
- * @param input: (N, in_features) 
- * @param output: (N, out_features)
- * @param weight: (in_features, out_features)
- * @param bias: (out_features)
- * @param N : number of samples
- * @param in_features : number of input features
- * @param out_features : number of output features
- */
+// Function declaration for the CUDA implementation of the linear layer forward pass
+// This function computes the output of a linear layer given the input, weight, and bias tensors.
+// Parameters:
+//   - input: A tensor containing the input data (shape: [N, in_features])
+//   - weight: A tensor containing the weight matrix (shape: [in_features, out_features])
+//   - bias: A tensor containing the bias vector (shape: [out_features])
+// Returns:
+//   - A tensor containing the output data (shape: [N, out_features])
+torch::Tensor linear_layer_forward_cuda(
+    torch::Tensor input,      // Input tensor for the linear layer
+    torch::Tensor weight,     // Weight tensor for the linear transformation
+    torch::Tensor bias);      // Bias tensor to be added to the output
 
- __global__ void linear_layer_forward(float* input, float* output, float* weight, float* bias, int N, int in_features, int out_features);
+// Function declaration for the C++ interface of the linear layer forward pass
+// This function serves as a wrapper to call the CUDA implementation.
+// Parameters are the same as for the CUDA function.
+// Returns the output tensor computed by the CUDA function.
+torch::Tensor linear_layer_forward(
+    torch::Tensor input,      // Input tensor for the linear layer
+    torch::Tensor weight,     // Weight tensor for the linear transformation
+    torch::Tensor bias);      // Bias tensor to be added to the output
 
- #ifdef __cplusplus
- }
- #endif
-
-#endif // LINEAR_LAYER_H
+#endif // LINEAR_LAYER_H // End of the include guard
