@@ -37,12 +37,12 @@ __global__ void linear_layer_forward_kernel(
         for (int i = 0; i < num_input_features; i++) {
             // Remove typeid operations as they are not allowed in device code
             sum += input[row * num_input_features + i] * weight[i * num_output_features + col];
-        // Print size of variables in bytes
-        if (row == 0 && col == 0) {
-            printf("Size of input element: %lu bytes\n", sizeof(input[0]));
-            printf("Size of weight element: %lu bytes\n", sizeof(weight[0]));
-            printf("Size of sum: %lu bytes\n", sizeof(sum));
-        }
+        // // Print size of variables in bytes
+        // if (row == 0 && col == 0) {
+        //     printf("Size of input element: %lu bytes\n", sizeof(input[0]));
+        //     printf("Size of weight element: %lu bytes\n", sizeof(weight[0]));
+        //     printf("Size of sum: %lu bytes\n", sizeof(sum));
+        // }
         }
         // Store the computed value in the output tensor, adding the bias
         output[row * num_output_features + col] = sum + bias[col];
