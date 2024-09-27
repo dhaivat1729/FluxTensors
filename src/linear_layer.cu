@@ -37,12 +37,7 @@ __global__ void linear_layer_forward_kernel(
         for (int i = 0; i < num_input_features; i++) {
             // Remove typeid operations as they are not allowed in device code
             sum += input[row * num_input_features + i] * weight[i * num_output_features + col];
-        // // Print size of variables in bytes
-        // if (row == 0 && col == 0) {
-        //     printf("Size of input element: %lu bytes\n", sizeof(input[0]));
-        //     printf("Size of weight element: %lu bytes\n", sizeof(weight[0]));
-        //     printf("Size of sum: %lu bytes\n", sizeof(sum));
-        // }
+
         }
         // Store the computed value in the output tensor, adding the bias
         output[row * num_output_features + col] = sum + bias[col];
@@ -67,6 +62,7 @@ torch::Tensor linear_layer_forward_cuda(
 
     // Define the number of threads per block (16x16)
     const dim3 threads(16, 16);
+    
     // Calculate the number of blocks needed for the grid
     const dim3 blocks((num_samples + threads.x - 1) / threads.x, 
                       (num_output_features + threads.y - 1) / threads.y);
@@ -94,6 +90,31 @@ torch::Tensor linear_layer_forward(
 {
     // Call the CUDA implementation of the forward pass
     return linear_layer_forward_cuda(input, weight, bias);
+}
+
+
+// implement a backward pass for the linear layer
+torch::Tensor linear_layer_backward(
+    torch::Tensor input,
+    torch::Tensor weight,
+    torch::Tensor output,
+    torch::Tensor grad_output)
+{
+    // get the number of samples from the input tensor
+    const auto num_samples = input.size(0);
+
+    // get the number of input features from the input tensor
+    const auto num_input_features = input.size(1);
+
+    // get the number of output features from the weight tensor
+    const auto num_output_features = weight.size(1);
+
+    // create an empty tensor for the gradient of the weight
+    auto grad_weight = torch::empty({num_input_features, num_output_features});
+
+    // create an empty tensor for gradient of the bias
+    auto grad_bias = torch::empty({num_output_features});
+
 }
 
 // PyBind11 module definition for the linear layer extension
