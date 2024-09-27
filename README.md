@@ -20,6 +20,4 @@ Each layer is implemented as a CUDA kernel, allowing for efficient computation o
 
 To use these layers, you will need to initialize them in your CUDA environment and call the respective kernels during the forward and backward passes of your model. 
 
-### Example
 
-Here is a simple example of how to define and use a linear layer in your model:
